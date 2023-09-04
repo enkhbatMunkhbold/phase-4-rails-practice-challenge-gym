@@ -7,7 +7,7 @@ class GymsController < ApplicationController
   end
 
   def show
-    gym = Gym.find(params[:id])
+    gym = get_gym
     if gym
       render json: gym
     else
@@ -16,13 +16,33 @@ class GymsController < ApplicationController
   end
 
   def destroy
-    gym = Gym.find(params[:id])
+    gym = get_gym
     if gym
       gym.destroy
       head :no_content
     else
       render_not_found_response
     end
+  end
+
+  def update
+    gym = get_gym
+    if gym
+      gym.update(gym_params)
+      render json: gym
+    else
+      render_not_found_response
+    end
+  end
+
+  private
+
+  def get_gym
+    Gym.find(params[:id])
+  end
+
+  def gym_params
+    params.permit(:name, :address)
   end
 
   def render_not_found_response
