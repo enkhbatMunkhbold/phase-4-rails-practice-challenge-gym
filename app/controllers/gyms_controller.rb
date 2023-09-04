@@ -18,7 +18,8 @@ class GymsController < ApplicationController
   def destroy
     gym = Gym.find(params[:id])
     if gym
-      gym.destroy, head: :no_content
+      gym.destroy
+      head :no_content
     else
       render_not_found_response
     end

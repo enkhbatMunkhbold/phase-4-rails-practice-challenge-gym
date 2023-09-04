@@ -1,10 +1,28 @@
 class MembershipsController < ApplicationController
   rescue_from ActiveRecord::RecordInvalid, with: :render_uprocessable_entity_response
 
-  def create
+  def index
     memberships = Membership.all
+    render json: memberships
+  end
+  
+  def create
     new_membership = Membership.create(membership_params)
-    render json: new_membership, status: :created
+    if new_membership.valid?
+      render json: new_membership, status: :created
+    else
+      render json: { error: "Membership already created" }
+    end
+  end
+
+  def destroy
+    membership = Membership.find(params[:id])
+    if membership
+      membership.destroy
+      head :no_content
+    else
+      render json: { error: "Membership not found" }, status: :not_found
+    end
   end
 
   def render_uprocessable_entity_response
